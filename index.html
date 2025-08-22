@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Resume | Ravi Aggarwal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: A thematic, single-page application designed for non-linear exploration. The structure includes: 1) A main header for identity and contact. 2) A tab-based navigation to switch between key themes: 'Overview', 'Career Journey', 'Projects', and 'Impact Dashboard'. This structure was chosen to allow recruiters to quickly access the information most relevant to them. The addition of a 'Projects' tab provides a portfolio-style showcase of tangible products and direct links to app stores. -->
+    <!-- Visualization & Content Choices: 1) Professional Summary (Overview): Goal is to inform. Presented as clear text. 2) Core Competencies (Overview): Goal is to organize. Presented as categorized, clickable tags. 3) Career Journey: Goal is to show change over time. An interactive timeline. 4) Projects: Goal is to showcase tangible work. A card-based layout with screenshots, descriptions, impact metrics, and app store links. 5) Impact Dashboard: Goal is to compare and quantify achievements using Chart.js visualizations. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8;
+            color: #333;
+        }
+        .nav-active {
+            border-bottom-color: #A58A76;
+            color: #A58A76;
+            font-weight: 600;
+        }
+        .nav-inactive {
+            border-bottom-color: transparent;
+            color: #707070;
+        }
+        .timeline-item {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .timeline-item.active {
+            background-color: #EFEBE7;
+            transform: translateY(-4px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 350px;
+        }
+        .project-card {
+            transition: all 0.3s ease;
+            border: 1px solid #EFEBE7;
+            overflow: hidden;
+        }
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.07);
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="container mx-auto p-4 sm:p-6 md:p-8 max-w-6xl">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-bold text-[#4A4A4A]">Ravi Aggarwal</h1>
+            <h2 class="text-xl md:text-2xl text-[#A58A76] mt-2">Engineering Manager</h2>
+            <div class="flex justify-center space-x-4 mt-4 text-sm text-gray-600">
+                <a href="mailto:ravi.aggarwal61@gmail.com" class="hover:text-[#A58A76]">ravi.aggarwal61@gmail.com</a>
+                <span>&bull;</span>
+                <a href="https://linkedin.com/in/ravi-aggarwal-72b79850" target="_blank" class="hover:text-[#A58A76]">LinkedIn</a>
+                <span>&bull;</span>
+                <a href="https://medium.com/@ravi.aggarwal61" target="_blank" class="hover:text-[#A58A76]">Medium</a>
+            </div>
+        </header>
+
+        <nav class="flex flex-wrap justify-center border-b border-gray-200 mb-8">
+            <button data-tab="overview" class="nav-tab nav-active text-lg py-3 px-6 border-b-2 transition-colors duration-300">Overview</button>
+            <button data-tab="journey" class="nav-tab nav-inactive text-lg py-3 px-6 border-b-2 transition-colors duration-300">Career Journey</button>
+            <button data-tab="projects" class="nav-tab nav-inactive text-lg py-3 px-6 border-b-2 transition-colors duration-300">Projects</button>
+            <button data-tab="impact" class="nav-tab nav-inactive text-lg py-3 px-6 border-b-2 transition-colors duration-300">Impact Dashboard</button>
+        </nav>
+
+        <main>
+            <div id="overview" class="tab-content">
+                <section class="mb-8">
+                    <h3 class="text-2xl font-semibold text-[#4A4A4A] mb-4 text-center">Professional Summary</h3>
+                    <p class="text-center max-w-3xl mx-auto text-gray-700 leading-relaxed">
+                        Engineering Leader with over 9 years of experience building and scaling high-performing, full-stack engineering teams. Proven track record in consumer technology, delivering best-in-class application performance, stability, and user experience for products serving millions. Expert in driving technical strategy, fostering a culture of system reliability, and leveraging advanced AI frameworks like Retrieval-Augmented Generation (RAG) for enhanced developer productivity. Passionate about mentoring senior engineers and aligning technology with business outcomes.
+                    </p>
+                </section>
+                <section>
+                    <h3 class="text-2xl font-semibold text-[#4A4A4A] mb-6 text-center">Core Competencies</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                            <h4 class="text-lg font-bold text-[#A58A76] mb-3">Leadership & Strategy</h4>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="bg-[#EFEBE7] text-[#6B5B4D] text-sm font-medium px-3 py-1 rounded-full">People Management</span>
+                                <span class="bg-[#EFEBE7] text-[#6B5B4D] text-sm font-medium px-3 py-1 rounded-full">Technical Strategy</span>
+                                <span class="bg-[#EFEBE7] text-[#6B5B4D] text-sm font-medium px-3 py-1 rounded-full">Roadmap Planning</span>
+                                <span class="bg-[#EFEBE7] text-[#6B5B4D] text-sm font-medium px-3 py-1 rounded-full">Stakeholder Alignment</span>
+                                <span class="bg-[#EFEBE7] text-[#6B5B4D] text-sm font-medium px-3 py-1 rounded-full">OKR Definition</span>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                            <h4 class="text-lg font-bold text-[#A58A76] mb-3">Technical Management</h4>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="bg-[#EFEBE7] text-[#6B5B4D] text-sm font-medium px-3 py-1 rounded-full">System Performance</span>
+                                <span class="bg-[#EFEBE7] text-[#6B5B4D] text-sm font-medium px-3 py-1 rounded-full">Scalable Architecture</span>
+                                <span class="bg-[#EFEBE7] text-[#6B5B4D] text-sm font-medium px-3 py-1 rounded-full">CI/CD & DevOps</span>
+                                <span class="bg-[#EFEBE7] text-[#6B5B4D] text-sm font-medium px-3 py-1 rounded-full">Agile Delivery</span>
+                                <span class="bg-[#EFEBE7] text-[#6B5B4D] text-sm font-medium px-3 py-1 rounded-full">A/B Testing</span>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                            <h4 class="text-lg font-bold text-[#A58A76] mb-3">Technology & AI</h4>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="bg-[#EFEBE7] text-[#6B5B4D] text-sm font-medium px-3 py-1 rounded-full">Mobile (iOS, Flutter)</span>
+                                <span class="bg-[#EFEBE7] text-[#6B5B4D] text-sm font-medium px-3 py-1 rounded-full">Backend (Java)</span>
+                                <span class="bg-[#EFEBE7] text-[#6B5B4D] text-sm font-medium px-3 py-1 rounded-full">MVVM & TDD</span>
+                                <span class="bg-[#EFEBE7] text-[#6B5B4D] text-sm font-medium px-3 py-1 rounded-full">Docker & Jenkins</span>
+                                <span class="bg-[#EFEBE7] text-[#6B5B4D] text-sm font-medium px-3 py-1 rounded-full">AI Engineering (RAG, Windsurf)</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div id="journey" class="tab-content hidden">
+                 <p class="text-center max-w-3xl mx-auto text-gray-700 leading-relaxed mb-8">
+                    This timeline showcases my career progression from a hands-on engineer to a full-stack engineering leader. I began by mastering mobile performance and reliability, then expanded my scope to lead teams across the entire technology stack. Click on any role to see the key achievements and impact from that period.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-2 mb-8">
+                    <div class="timeline-item active p-4 rounded-lg text-center" data-role="junglee">
+                        <p class="font-bold">Junglee Games</p><p class="text-sm text-gray-500">2024 - Present</p>
+                    </div>
+                    <div class="timeline-item p-4 rounded-lg text-center" data-role="tata">
+                        <p class="font-bold">Tata CLiQ</p><p class="text-sm text-gray-500">2021 - 2024</p>
+                    </div>
+                    <div class="timeline-item p-4 rounded-lg text-center" data-role="tokopedia">
+                        <p class="font-bold">Tokopedia</p><p class="text-sm text-gray-500">2019 - 2021</p>
+                    </div>
+                    <div class="timeline-item p-4 rounded-lg text-center" data-role="paytm">
+                        <p class="font-bold">Paytm Money</p><p class="text-sm text-gray-500">2018 - 2019</p>
+                    </div>
+                    <div class="timeline-item p-4 rounded-lg text-center" data-role="kuliza">
+                        <p class="font-bold">Kuliza</p><p class="text-sm text-gray-500">2016 - 2018</p>
+                    </div>
+                </div>
+                <div id="role-details" class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                </div>
+            </div>
+            
+            <div id="projects" class="tab-content hidden">
+                 <p class="text-center max-w-3xl mx-auto text-gray-700 leading-relaxed mb-8">
+                    This showcase highlights the tangible products and platforms I've led and contributed to. Each card details the product's purpose, my specific impact, and provides direct links to the live applications on the app stores.
+                </p>
+                <div id="project-cards-container" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Project cards will be injected here by JavaScript -->
+                </div>
+            </div>
+
+            <div id="impact" class="tab-content hidden">
+                <p class="text-center max-w-3xl mx-auto text-gray-700 leading-relaxed mb-8">
+                    This dashboard visualizes key performance indicators and achievements from across my career. It highlights my focus on data-driven improvements in application performance, user experience, and team productivity. Interact with the charts to explore the data behind major initiatives like platform stability, size optimization, and AI integration.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                        <h4 class="text-lg font-bold text-center text-[#4A4A4A] mb-4">Platform Stability: Crash-Free Users</h4>
+                        <div class="chart-container">
+                            <canvas id="cfuChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                        <h4 class="text-lg font-bold text-center text-[#4A4A4A] mb-4">Application Size Reduction Impact</h4>
+                         <div class="chart-container">
+                            <canvas id="appSizeChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                        <h4 class="text-lg font-bold text-center text-[#4A4A4A] mb-4">AI-Powered Code Generation</h4>
+                         <div class="chart-container">
+                            <canvas id="aiAdoptionChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                        <h4 class="text-lg font-bold text-center text-[#4A4A4A] mb-4">Key Metric Improvements</h4>
+                         <div class="chart-container">
+                            <canvas id="metricsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const tabs = document.querySelectorAll('.nav-tab');
+        const contents = document.querySelectorAll('.tab-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(item => {
+                    item.classList.remove('nav-active');
+                    item.classList.add('nav-inactive');
+                });
+                tab.classList.add('nav-active');
+                tab.classList.remove('nav-inactive');
+
+                const target = tab.getAttribute('data-tab');
+                contents.forEach(content => {
+                    if (content.id === target) {
+                        content.classList.remove('hidden');
+                    } else {
+                        content.classList.add('hidden');
+                    }
+                });
+            });
+        });
+
+        const roleData = {
+            junglee: {
+                title: 'Engineering Manager @ Junglee Games (2024 - Present)',
+                points: [
+                    'Led a full-stack engineering team of 8 for core transactions and growth, driving initiatives across mobile (Flutter, iOS) and backend systems.',
+                    'Championed advanced AI tools, including the Windsurf agentic IDE and custom RAG models, generating over 50% of new code and accelerating team velocity.',
+                    'Drove a 35% reduction in application size, doubling the visit-to-install conversion rate and boosting user acquisition.',
+                    'Spearheaded a multilingual project using AI, developing an admin dashboard for AI-powered translation that streamlined localization workflows.'
+                ]
+            },
+            tata: {
+                title: 'Engineering Manager @ Tata CLiQ (2021 - 2024)',
+                points: [
+                    'Managed a team of 8 engineers to achieve and maintain a world-class 99.99% Crash-Free User (CFU) rate, establishing a benchmark for platform stability.',
+                    'Led critical Page Load Time (PLT) optimization, collaborating with backend API and infrastructure teams for end-to-end performance gains.',
+                    'Drove a significant application size reduction of ~200 MB, directly improving user retention and experience metrics.',
+                    'Created personalized growth plans for team members, enhancing engagement and fostering a high-performance culture.'
+                ]
+            },
+            tokopedia: {
+                title: 'Lead Software Engineer @ Tokopedia (2019 - 2021)',
+                points: [
+                    'Mentored and led a team of mobile developers, owning architectural design and code quality to achieve 100% on-time roadmap completion.',
+                    'Architected scalable mobile solutions using MVVM and reactive patterns, achieving 80% unit test coverage.',
+                    'Improved user conversion by 10% by driving data-informed A/B testing and analytics initiatives.',
+                    'Established robust CI/CD pipelines that achieved a 98% release success rate and accelerated deployment frequency.'
+                ]
+            },
+            paytm: {
+                title: 'Software Engineer @ Paytm Money (2018 - 2019)',
+                points: [
+                    'Built a scalable application framework using an MVVM architecture with a Test-Driven Development (TDD) approach.',
+                    'Improved code coverage of core business logic by 85% by championing the adoption of unit tests.',
+                    'Collaborated with product managers to launch new features that increased user engagement by 15%.'
+                ]
+            },
+            kuliza: {
+                title: 'Software Engineer @ Kuliza Technologies (2016 - 2018)',
+                points: [
+                    'Led technical initiatives to optimize application performance, resulting in a 30% improvement in app start time.',
+                    'Improved the Crash-Free User (CFU) rate from 98% to 99.5% by systematically reducing memory leaks using advanced profiling tools.'
+                ]
+            }
+        };
+
+        const timelineItems = document.querySelectorAll('.timeline-item');
+        const roleDetailsContainer = document.getElementById('role-details');
+
+        function updateRoleDetails(roleKey) {
+            const data = roleData[roleKey];
+            let html = `<h4 class="text-xl font-bold text-[#4A4A4A] mb-4">${data.title}</h4><ul class="list-disc list-inside space-y-2 text-gray-700">`;
+            data.points.forEach(point => {
+                html += `<li>${point}</li>`;
+            });
+            html += `</ul>`;
+            roleDetailsContainer.innerHTML = html;
+
+            timelineItems.forEach(item => {
+                item.classList.remove('active');
+                if(item.dataset.role === roleKey) {
+                    item.classList.add('active');
+                }
+            });
+        }
+
+        timelineItems.forEach(item => {
+            item.addEventListener('click', () => {
+                updateRoleDetails(item.dataset.role);
+            });
+        });
+        
+        const projectData = [
+            {
+                name: "Junglee Rummy",
+                description: "A leading online gaming platform in India with millions of users, focusing on real-money card games and tournaments.",
+                metrics: [
+                    "<strong>~75 Million</strong> total user base.",
+                    "Crossed <strong>70 Million</strong> players in July 2023.",
+                    "Ranked <strong>#4 in Casino</strong> on the App Store."
+                ],
+                tech: ["Flutter", "iOS", "Java", "AI/ML"],
+                iosUrl: "https://apps.apple.com/in/app/junglee-rummy-play-rummy-game/id1385531975",
+                androidUrl: "https://play.google.com/store/apps/details?id=com.jungleegames.rummy",
+                imageUrl: "https://entrackr.com/storage/2021/07/Junglee-Rummy.jpg"
+            },
+            {
+                name: "Tata CLiQ Fashion & Luxury",
+                description: "A premier e-commerce destination for curated fashion and luxury brands in India, from the trusted Tata Group.",
+                metrics: [
+                    "Attracts nearly <strong>8 Million</strong> monthly visits.",
+                    "Achieved a <strong>57% increase</strong> in clicks for key categories.",
+                    "Drove <strong>3-4x higher response</strong> to personalized campaigns."
+                ],
+                tech: ["iOS (Swift)", "Performance Tuning", "CI/CD"],
+                iosUrl: "https://apps.apple.com/in/app/tata-cliq-fashion-shopping/id1101619385",
+                androidUrl: "https://play.google.com/store/apps/details?id=com.tata.cliq",
+                imageUrl: "https://www.tatacliq.com/images/CLiQ-luxury-new-logo-1.png"
+            },
+            {
+                name: "Tokopedia Marketplace",
+                description: "One of the largest e-commerce platforms in Indonesia, empowering millions of merchants and consumers daily.",
+                metrics: [
+                    "Serves over <strong>90 Million</strong> monthly active users.",
+                    "A top 2 e-commerce platform in Indonesia with <strong>>100M</strong> monthly visitors.",
+                    "Facilitates a significant portion of Indonesia's digital economy."
+                ],
+                tech: ["iOS (Swift)", "MVVM", "RxSwift", "Jenkins"],
+                iosUrl: "https://apps.apple.com/id/app/tokopedia-8-8/id1001394201",
+                androidUrl: "https://play.google.com/store/apps/details?id=com.tokopedia.tkpd",
+                imageUrl: "https://assets.tokopedia.net/assets-tokopedia-lite/v2/zeus/production/e5b8438b.png"
+            },
+            {
+                name: "Paytm Money",
+                description: "A comprehensive wealth management and investment platform, making investing simple and accessible for millions of Indians.",
+                metrics: [
+                    "Part of the Paytm ecosystem with over <strong>300 Million</strong> users.",
+                    "User base is nearly <strong>80% millennials</strong> (under 35).",
+                    "Experienced <strong>114% growth</strong> in female investors year-over-year."
+                ],
+                tech: ["iOS (Swift)", "MVVM", "TDD", "RxSwift"],
+                iosUrl: "https://apps.apple.com/in/app/paytm-money-stocks-mf-ipo/id1344431352",
+                androidUrl: "https://play.google.com/store/apps/details?id=com.paytmmoney",
+                imageUrl: "https://play-lh.googleusercontent.com/V92Im65053X4i40Gk5bV0KK2iXpGna-2g04udxP7yv-XcFk1o-j25aAD77-3GfX99kM=w526-h296-rw"
+            }
+        ];
+
+        function createProjectCards() {
+            const container = document.getElementById('project-cards-container');
+            let allCardsHtml = '';
+            projectData.forEach(project => {
+                const techHtml = project.tech.map(t => `<span class="bg-[#EFEBE7] text-[#6B5B4D] text-xs font-medium px-2.5 py-1 rounded-full">${t}</span>`).join('');
+                const metricsHtml = project.metrics.map(m => `<li class="text-gray-600">${m}</li>`).join('');
+
+                allCardsHtml += `
+                    <div class="bg-white rounded-lg shadow-sm project-card flex flex-col">
+                        <img src="${project.imageUrl}" alt="${project.name} screenshot" class="w-full h-48 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/600x300/EFEBE7/6B5B4D?text=Image+Not+Found';">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h4 class="text-xl font-bold text-[#4A4A4A]">${project.name}</h4>
+                            <p class="text-gray-500 mt-1 mb-4 flex-grow">${project.description}</p>
+                            
+                            <h5 class="font-semibold text-[#A58A76] mb-2">Public Metrics:</h5>
+                            <ul class="list-disc list-inside space-y-1 mb-4">
+                                ${metricsHtml}
+                            </ul>
+
+                            <div class="mb-4">
+                                <h5 class="font-semibold text-[#A58A76] mb-2">Technologies:</h5>
+                                <div class="flex flex-wrap gap-2">
+                                    ${techHtml}
+                                </div>
+                            </div>
+
+                            <div class="mt-auto pt-4 border-t border-gray-100 flex justify-end space-x-4">
+                                <a href="${project.androidUrl}" target="_blank" class="text-sm font-medium text-gray-600 hover:text-[#A58A76] transition-colors">Android App</a>
+                                <a href="${project.iosUrl}" target="_blank" class="text-sm font-medium text-gray-600 hover:text-[#A58A76] transition-colors">iOS App</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = allCardsHtml;
+        }
+
+        window.onload = function() {
+            updateRoleDetails('junglee');
+            createProjectCards();
+
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    tooltip: {
+                        backgroundColor: '#4A4A4A',
+                        titleFont: { size: 14, weight: 'bold' },
+                        bodyFont: { size: 12 },
+                        padding: 10,
+                        cornerRadius: 4,
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#6B5B4D' }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: '#EFEBE7' },
+                        ticks: { color: '#6B5B4D' }
+                    }
+                }
+            };
+
+            new Chart(document.getElementById('cfuChart'), {
+                type: 'line',
+                data: {
+                    labels: ['Kuliza', 'Paytm', 'Tokopedia', 'Tata CLiQ'],
+                    datasets: [{
+                        label: 'Crash-Free User %',
+                        data: [98, 99.5, 99.9, 99.99],
+                        borderColor: '#A58A76',
+                        backgroundColor: 'rgba(165, 138, 118, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: { ...chartOptions, scales: { ...chartOptions.scales, y: { ...chartOptions.scales.y, min: 97.5, max: 100, ticks: { ...chartOptions.scales.y.ticks, callback: value => value + '%' } } } }
+            });
+
+            new Chart(document.getElementById('appSizeChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Tata CLiQ (MB)', 'Junglee Games (%)'],
+                    datasets: [{
+                        label: 'Reduction',
+                        data: [200, 35],
+                        backgroundColor: ['#CDB8A8', '#A58A76'],
+                        borderColor: ['#CDB8A8', '#A58A76'],
+                        borderWidth: 1
+                    }]
+                },
+                options: { ...chartOptions, plugins: { ...chartOptions.plugins, legend: { display: false } } }
+            });
+
+            new Chart(document.getElementById('aiAdoptionChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['AI Generated Code', 'Developer Written Code'],
+                    datasets: [{
+                        data: [50, 50],
+                        backgroundColor: ['#A58A76', '#EFEBE7'],
+                        borderColor: '#FFFFFF',
+                        borderWidth: 4,
+                        hoverOffset: 4
+                    }]
+                },
+                options: { ...chartOptions, scales: { x: { display: false }, y: { display: false } } }
+            });
+
+            new Chart(document.getElementById('metricsChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['User Engagement', 'Code Coverage', 'Conversion Rate', 'App Start Time'],
+                    datasets: [{
+                        label: '% Improvement',
+                        data: [15, 85, 10, 30],
+                        backgroundColor: ['#CDB8A8', '#A58A76', '#8E7A6B', '#6B5B4D'],
+                    }]
+                },
+                options: { ...chartOptions, indexAxis: 'y', plugins: { ...chartOptions.plugins, legend: { display: false } } }
+            });
+        };
+    </script>
+</body>
+</html>
