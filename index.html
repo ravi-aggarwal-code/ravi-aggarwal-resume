@@ -77,14 +77,14 @@
         </header>
 
         <nav class="flex flex-wrap justify-center border-b border-gray-200 mb-8">
-            <button data-tab="overview" class="nav-tab nav-active text-lg py-3 px-6 border-b-2 transition-colors duration-300">Overview</button>
+            <button data-tab="overview" class="nav-tab nav-inactive text-lg py-3 px-6 border-b-2 transition-colors duration-300">Overview</button>
             <button data-tab="journey" class="nav-tab nav-inactive text-lg py-3 px-6 border-b-2 transition-colors duration-300">Career Journey</button>
             <button data-tab="projects" class="nav-tab nav-inactive text-lg py-3 px-6 border-b-2 transition-colors duration-300">Projects</button>
             <button data-tab="impact" class="nav-tab nav-inactive text-lg py-3 px-6 border-b-2 transition-colors duration-300">Impact Dashboard</button>
         </nav>
 
         <main>
-            <div id="overview" class="tab-content">
+            <div id="overview" class="tab-content hidden">
                 <section class="mb-8">
                     <h3 class="text-2xl font-semibold text-[#4A4A4A] mb-4 text-center">Professional Summary</h3>
                     <p class="text-center max-w-3xl mx-auto text-gray-700 leading-relaxed">
@@ -200,23 +200,34 @@
         const tabs = document.querySelectorAll('.nav-tab');
         const contents = document.querySelectorAll('.tab-content');
 
+        function switchToTab(tabName) {
+            tabs.forEach(item => {
+                item.classList.remove('nav-active');
+                item.classList.add('nav-inactive');
+            });
+            
+            const activeTab = document.querySelector(`[data-tab="${tabName}"]`);
+            if (activeTab) {
+                activeTab.classList.add('nav-active');
+                activeTab.classList.remove('nav-inactive');
+            }
+
+            contents.forEach(content => {
+                if (content.id === tabName) {
+                    content.classList.remove('hidden');
+                } else {
+                    content.classList.add('hidden');
+                }
+            });
+            
+            // Save the active tab to localStorage
+            localStorage.setItem('activeTab', tabName);
+        }
+
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
-                tabs.forEach(item => {
-                    item.classList.remove('nav-active');
-                    item.classList.add('nav-inactive');
-                });
-                tab.classList.add('nav-active');
-                tab.classList.remove('nav-inactive');
-
                 const target = tab.getAttribute('data-tab');
-                contents.forEach(content => {
-                    if (content.id === target) {
-                        content.classList.remove('hidden');
-                    } else {
-                        content.classList.add('hidden');
-                    }
-                });
+                switchToTab(target);
             });
         });
 
@@ -384,6 +395,10 @@
         }
 
         window.onload = function() {
+            // Always restore the active tab from localStorage or default to 'overview'
+            const savedTab = localStorage.getItem('activeTab') || 'overview';
+            switchToTab(savedTab);
+            
             updateRoleDetails('junglee');
             createProjectCards();
 
